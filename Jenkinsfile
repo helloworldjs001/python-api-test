@@ -1,7 +1,7 @@
 pipeline {
-  agent{
-        docker{
-            image 'node:latest'
+    agent {
+        docker {
+            image 'python:3.8'  // Use an image that includes Python
             args '-u root:root'
         }
     }
@@ -47,13 +47,13 @@ pipeline {
                 script {
                     sh '''
                     source ${VENV_DIR}/bin/activate
-                    pytest
+                    pytest --html=report.html
                     '''
                 }
             }
         }
 
-       
+      
 
         stage('Email Report') {
             steps {
@@ -61,6 +61,7 @@ pipeline {
                     emailext(
                         to: 'test.adam011@gmail.com',
                         subject: "API Test Report for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "Please find the API test report attached.",
                     )
                 }
             }

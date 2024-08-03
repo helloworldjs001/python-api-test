@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+  agent{
+        docker{
+            image 'node:latest'
+            args '-u root:root'
+        }
+    }
 
     environment {
         PYTHON_VERSION = '3.8'

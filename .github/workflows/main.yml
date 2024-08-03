@@ -14,38 +14,31 @@ jobs:
 
     services:
       flask-app:
-        image: tiangolo/uwsgi-nginx-flask:python3.8
+        image: python:3.8
         ports:
-          - 5000:80
+          - 5000:5000
         options: >-
           --health-cmd "curl --fail http://localhost:5000 || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        env:
-          FLASK_APP: /mnt/data/flask_app.py
-        volumes:
-          - .:/mnt/data
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+      - name: Set up Docker Compose
+        run: docker-compose up -d
 
       - name: Install dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install pytest requests pytest-html pytest-cov
+          docker-compose exec flask-app sh -c "
+          pip install -r requirements.txt"
 
       - name: Run tests
         run: |
-          source venv/bin/activate
-          pytest --html=report.html --cov=flask_app --cov-report=html
+          docker-compose exec flask-app sh -c "
+          pytest --html=report.html --cov=flask_app --cov-report=html"
 
       - name: Upload test report
         uses: actions/upload-artifact@v2

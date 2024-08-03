@@ -54,7 +54,7 @@ pipeline {
             steps {
                 script {
                     emailext(
-                        to: 'recipient@example.com',
+                        to: 'test.adam011@gmail.com',
                         subject: "API Test Report for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                     )
                 }
